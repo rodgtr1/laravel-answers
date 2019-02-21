@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Question;
 
 class QuestionController extends Controller
 {
@@ -23,7 +24,7 @@ class QuestionController extends Controller
      */
     public function create()
     {
-        //
+        return view('questions.create');
     }
 
     /**
@@ -34,7 +35,22 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate the form data
+        $this->validate($request, [
+            'title' => 'required|max:255'
+        ]);
+
+        // Process the data and submit it
+        $question = new Question();
+        $question->title = $request->title;
+        $question->description = $request->description;
+
+        // If successful we want to redirect to show page
+        if ($question->save()) {
+            return redirect()->route('questions.show', $question->id);
+        } else {
+            return redirect()->route('questions.create');
+        }
     }
 
     /**
